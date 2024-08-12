@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcategorias</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button id="buttonAddSubcategory">+ Subcategoria</button>
+        <div id="subcategoriesContainer"></div>
+    </div>
+    
+    <!-- Firebase and Main Script Modules -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="main.js"></script>
+    
+    <!-- Inline Script to Import and Use fetchSubcategories -->
+    <script type="module">
+        import { fetchSubcategories } from './main.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryId = urlParams.get('categoryId');
+
+        document.getElementById('buttonAddSubcategory').addEventListener('click', function() {
+            window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
+        });
+
+        fetchSubcategories(categoryId);
+    </script>
+</body>
+</html>
