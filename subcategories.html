@@ -35,7 +35,7 @@
     <script type="module">
         import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
         import { db } from './firebase-config.js';
-        import { fetchSubcategories } from './main.js';  <!-- Certifique-se de importar corretamente -->
+        import { fetchSubcategories } from './main.js';  // Certifique-se de importar corretamente
     
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
@@ -117,5 +117,5 @@
     
         fetchSubcategories(categoryId);
     </script>
-    
-    
+</body>
+</html>
