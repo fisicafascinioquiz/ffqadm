@@ -40,6 +40,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
     
+        document.getElementById('buttonAddSubcategory').addEventListener('click', function() {
+            window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
+        });
+
         document.getElementById('buttonEditSubcategory').addEventListener('click', async function() {
             const subcategoriesContainer = document.getElementById('subcategoriesContainer');
             subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias

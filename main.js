@@ -33,12 +33,13 @@ export async function fetchSubcategories(categoryId) {
         querySnapshot.forEach((doc) => {
             const subcategory = doc.data();
             subcategoriesContainer.innerHTML += `
-                <div class="card" onclick="navigateToQuestions('${categoryId}', '${doc.id}')">
-                    <h3>${subcategory.subcategoryName}</h3>
-                    <p style="font-size: 0.9em; color: grey;">
-                        ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
-                    </p>
-                </div>
+                <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${doc.id}')">
+        <h3>${subcategory.subcategoryName}</h3>
+        <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
+        <p style="font-size: 0.9em; color: grey;">
+            ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+        </p>
+    </div>
             `;
         });
 
@@ -50,7 +51,6 @@ export async function fetchSubcategories(categoryId) {
         subcategoriesContainer.innerHTML = "<p>Erro ao carregar subcategorias.</p>";
     }
 }
-
 
 export async function fetchQuestions(categoryId, subcategoryId) {
     const questionsContainer = document.getElementById('questionsContainer');
