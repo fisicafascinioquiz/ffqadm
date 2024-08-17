@@ -11,6 +11,20 @@
         <button id="buttonAddSubcategory">+ Subcategoria</button>
         <button id="buttonEditSubcategory">Editar Subcategoria</button>
         <div id="subcategoriesContainer"></div>
+        <div id="editSubcategoryContainer" style="display:none;">
+            <h2>Editar Subcategoria</h2>
+            <input type="text" id="editTextSubcategoryName" placeholder="Nome da Subcategoria">
+            <input type="text" id="editTextSubcategoryImage" placeholder="URL da Imagem">
+            <input type="number" id="editTextMaxIndex" placeholder="Índice Máximo">
+            <input type="number" id="editTextQuestionsCount" placeholder="Quantidade de Questões">
+            <input type="number" id="editTextpointsPerQuestion" placeholder="Pontos por Questão">
+            <input type="number" id="editTextTime" placeholder="Tempo em Minutos">
+            <select id="spinnerIsAdapted">
+                <option value="true">Adaptada</option>
+                <option value="false">Não adaptada</option>
+            </select>
+            <button id="buttonUpdateSubcategory">Salvar</button>
+        </div>
     </div>
     
     <!-- Firebase and Main Script Modules -->
@@ -19,7 +33,7 @@
     
     <!-- Inline Script to Import and Use fetchSubcategories -->
     <script type="module">
-        import { fetchSubcategories } from './main.js';
+        import { fetchSubcategories, editSubcategory, updateSubcategory } from './main.js';
 
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
@@ -28,8 +42,48 @@
             window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
         });
 
-        document.getElementById('buttonEditSubcategory').addEventListener('click', function() {
-             window.location.href = `edit-subcategory.html?categoryId=${categoryId}`;
+        document.getElementById('buttonEditSubcategory').addEventListener('click', async function() {
+            const subcategoriesContainer = document.getElementById('subcategoriesContainer');
+            subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
+                querySnapshot.forEach((doc) => {
+                    const subcategory = doc.data();
+                    subcategoriesContainer.innerHTML += `
+                        <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${doc.id}')">
+                            <h3>${subcategory.subcategoryName}</h3>
+                            <p style="font-size: 0.9em; color: grey;">
+                                ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+                            </p>
+                        </div>
+                    `;
+                });
+
+                if (querySnapshot.empty) {
+                    subcategoriesContainer.innerHTML = "<p>Nenhuma subcategoria encontrada.</p>";
+                }
+            } catch (error) {
+                console.error("Erro ao carregar subcategorias: ", error);
+                subcategoriesContainer.innerHTML = "<p>Erro ao carregar subcategorias.</p>";
+            }
+        });
+
+        window.loadSubcategoryForEditing = async function(categoryId, subcategoryId) {
+            const editContainer = document.getElementById('editSubcategoryContainer');
+            const subcategoriesContainer = document.getElementById('subcategoriesContainer');
+            subcategoriesContainer.style.display = 'none'; // Oculta a lista de subcategorias
+            editContainer.style.display = 'block'; // Exibe os campos de edição
+
+            await editSubcategory(categoryId, subcategoryId);
+        };
+
+        document.getElementById('buttonUpdateSubcategory').addEventListener('click', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryId = urlParams.get('categoryId');
+            const subcategoryId = urlParams.get('subcategoryId');
+
+            await updateSubcategory(categoryId, subcategoryId);
         });
 
         fetchSubcategories(categoryId);
