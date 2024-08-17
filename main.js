@@ -1,18 +1,35 @@
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 import { db } from "./firebase-config.js";
+import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
+
+// Fetch categories and display them in the categories container
 export async function fetchCategories() {
     const categoriesContainer = document.getElementById('categoriesContainer');
-    categoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as categorias
+    categoriesContainer.innerHTML = ""; // Clear the container before adding categories
     try {
         const querySnapshot = await getDocs(collection(db, "categories"));
         querySnapshot.forEach((doc) => {
             const category = doc.data();
-            categoriesContainer.innerHTML += `
-                <div class="card" onclick="navigateToSubcategories('${doc.id}')">
-                    <h3>${category.categoryName}</h3>
-                </div>
+            const card = document.createElement('div');
+            card.classList.add('card');
+            
+            card.innerHTML = `
+                <h3>${category.categoryName}</h3>
+                <button class="delete-btn" onclick="confirmDelete('category', '${doc.id}')">x</button>
             `;
+
+            card.addEventListener('click', () => {
+                navigateToSubcategories(doc.id);
+            });
+
+            card.querySelector('.delete-btn').addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevents the click from propagating to the card
+                confirmDelete('category', doc.id);
+            });
+
+
+            categoriesContainer.appendChild(card);
         });
 
         if (querySnapshot.empty) {
@@ -24,23 +41,36 @@ export async function fetchCategories() {
     }
 }
 
-// Fetch subcategories (newly exported)
+
 export async function fetchSubcategories(categoryId) {
     const subcategoriesContainer = document.getElementById('subcategoriesContainer');
-    subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias
+    subcategoriesContainer.innerHTML = ""; // Clear the container before adding subcategories
     try {
         const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
         querySnapshot.forEach((doc) => {
             const subcategory = doc.data();
-            subcategoriesContainer.innerHTML += `
-                <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${doc.id}')">
-        <h3>${subcategory.subcategoryName}</h3>
-        <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
-        <p style="font-size: 0.9em; color: grey;">
-            ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
-        </p>
-    </div>
+            const card = document.createElement('div');
+            card.classList.add('card');
+            
+            card.innerHTML = `
+                <h3>${subcategory.subcategoryName}</h3>
+                <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
+                <p style="font-size: 0.9em; color: grey;">
+                    ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+                </p>
+                <button class="delete-btn" onclick="confirmDelete('subcategory', '${doc.id}', '${categoryId}')">x</button>
             `;
+
+            card.addEventListener('click', () => {
+                navigateToQuestions(categoryId, doc.id);
+            });
+
+            card.querySelector('.delete-btn').addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevents the click from propagating to the card
+                confirmDelete('subcategory', doc.id, categoryId);
+            });
+
+            subcategoriesContainer.appendChild(card);
         });
 
         if (querySnapshot.empty) {
@@ -52,9 +82,10 @@ export async function fetchSubcategories(categoryId) {
     }
 }
 
+// Fetch questions and display them in the questions container
 export async function fetchQuestions(categoryId, subcategoryId) {
     const questionsContainer = document.getElementById('questionsContainer');
-    questionsContainer.innerHTML = ""; // Limpa o container antes de adicionar as questões
+    questionsContainer.innerHTML = ""; // Clear the container before adding questions
     try {
         const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories", subcategoryId, "questions"));
         querySnapshot.forEach((doc) => {
@@ -63,6 +94,7 @@ export async function fetchQuestions(categoryId, subcategoryId) {
                 <div class="card">
                     <h3>Questão ${question.index}</h3>
                     <p>${question.question}</p>
+                    <button class="delete-btn" onclick="confirmDelete('question', '${doc.id}', '${categoryId}', '${subcategoryId}')">x</button>
                 </div>
             `;
         });
@@ -76,6 +108,56 @@ export async function fetchQuestions(categoryId, subcategoryId) {
     }
 }
 
+function confirmDelete(type, docId, categoryId = null, subcategoryId = null) {
+    if (confirm("Tem certeza de que deseja excluir este item?")) {
+        if (type === 'category') {
+            deleteCategory(docId);
+        } else if (type === 'subcategory') {
+            deleteSubcategory(categoryId, docId);
+        } else if (type === 'question') {
+            deleteQuestion(categoryId, subcategoryId, docId);
+        }
+    }
+}
+
+async function deleteCategory(categoryId) {
+    try {
+        await deleteDoc(doc(db, "categories", categoryId)); 
+        alert("Categoria excluída com sucesso!");
+        window.location.reload();
+    } catch (error) {
+        console.error("Erro ao excluir categoria: ", error);
+        alert("Erro ao excluir categoria.");
+    }
+}
+
+// Delete a subcategory from Firestore
+async function deleteSubcategory(categoryId, subcategoryId) {
+    try {
+        await deleteDoc(doc(db, "categories", categoryId, "subcategories", subcategoryId));
+        alert("Subcategoria excluída com sucesso!");
+        window.location.reload();
+    } catch (error) {
+        console.error("Erro ao excluir subcategoria: ", error);
+        alert("Erro ao excluir subcategoria.");
+    }
+}
+
+
+// Delete a question from Firestore
+async function deleteQuestion(categoryId, subcategoryId, questionId) {
+    try {
+        await deleteDoc(doc(db, "categories", categoryId, "subcategories", subcategoryId, "questions", questionId));
+        alert("Questão excluída com sucesso!");
+        window.location.reload();
+    } catch (error) {
+        console.error("Erro ao excluir questão: ", error);
+        alert("Erro ao excluir questão.");
+    }
+}
+
+
+// Add a new category to Firestore
 async function addCategory() {
     const categoryName = document.getElementById('editTextCategoryName').value;
     const categoryImage = document.getElementById('editTextCategoryImage').value;
@@ -99,6 +181,7 @@ async function addCategory() {
     }
 }
 
+// Add a new subcategory under a specific category
 async function addSubcategory(categoryId) {
     const subcategoryName = document.getElementById('editTextSubcategoryName').value;
     const subcategoryImage = document.getElementById('editTextSubcategoryImage').value;
@@ -132,6 +215,7 @@ async function addSubcategory(categoryId) {
     }
 }
 
+// Add a new question under a specific subcategory
 async function addQuestion(categoryId, subcategoryId) {
     const question = document.getElementById('editTextQuestion').value;
     const option1 = document.getElementById('editTextOption1').value;
@@ -167,6 +251,7 @@ async function addQuestion(categoryId, subcategoryId) {
     }
 }
 
+// Edit an existing subcategory
 export async function editSubcategory(categoryId, subcategoryId) {
     try {
         const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
@@ -189,6 +274,7 @@ export async function editSubcategory(categoryId, subcategoryId) {
     }
 }
 
+// Update an existing subcategory's details
 export async function updateSubcategory(categoryId, subcategoryId) {
     try {
         const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
@@ -210,8 +296,7 @@ export async function updateSubcategory(categoryId, subcategoryId) {
     }
 }
 
-
-
+// Navigation functions
 function navigateToSubcategories(categoryId) {
     window.location.href = `subcategories.html?categoryId=${categoryId}`;
 }
@@ -220,8 +305,11 @@ function navigateToQuestions(categoryId, subcategoryId) {
     window.location.href = `questions.html?categoryId=${categoryId}&subcategoryId=${subcategoryId}`;
 }
 
+// Export functions to the global window object
 window.addCategory = addCategory;
 window.navigateToSubcategories = navigateToSubcategories;
 window.navigateToQuestions = navigateToQuestions;
 window.addQuestion = addQuestion;
 window.addSubcategory = addSubcategory;
+window.deleteCategory = deleteCategory;
+window.deleteSubcategory = deleteSubcategory;
