@@ -33,20 +33,16 @@
     
     <!-- Inline Script to Import and Use fetchSubcategories -->
     <script type="module">
-         import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-         import { db } from './firebase-config.js';
-
+        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        import { db } from './firebase-config.js';
+    
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
-
-        document.getElementById('buttonAddSubcategory').addEventListener('click', function() {
-            window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
-        });
-
+    
         document.getElementById('buttonEditSubcategory').addEventListener('click', async function() {
             const subcategoriesContainer = document.getElementById('subcategoriesContainer');
             subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias
-            
+    
             try {
                 const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
                 querySnapshot.forEach((doc) => {
@@ -60,7 +56,7 @@
                         </div>
                     `;
                 });
-
+    
                 if (querySnapshot.empty) {
                     subcategoriesContainer.innerHTML = "<p>Nenhuma subcategoria encontrada.</p>";
                 }
@@ -69,25 +65,55 @@
                 subcategoriesContainer.innerHTML = "<p>Erro ao carregar subcategorias.</p>";
             }
         });
-
+    
         window.loadSubcategoryForEditing = async function(categoryId, subcategoryId) {
             const editContainer = document.getElementById('editSubcategoryContainer');
             const subcategoriesContainer = document.getElementById('subcategoriesContainer');
             subcategoriesContainer.style.display = 'none'; // Oculta a lista de subcategorias
             editContainer.style.display = 'block'; // Exibe os campos de edição
-
-            await editSubcategory(categoryId, subcategoryId);
+    
+            try {
+                const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
+                const docSnap = await getDoc(docRef);
+    
+                if (docSnap.exists()) {
+                    const subcategory = docSnap.data();
+                    document.getElementById('editTextSubcategoryName').value = subcategory.subcategoryName;
+                    document.getElementById('editTextSubcategoryImage').value = subcategory.subcategoryImage;
+                    document.getElementById('editTextMaxIndex').value = subcategory.maxIndex;
+                    document.getElementById('editTextQuestionsCount').value = subcategory.questionsCount;
+                    document.getElementById('editTextpointsPerQuestion').value = subcategory.pointsPerQuestion;
+                    document.getElementById('editTextTime').value = subcategory.time;
+                    document.getElementById('spinnerIsAdapted').value = subcategory.isAdapted ? "true" : "false";
+                } else {
+                    alert("Subcategoria não encontrada.");
+                }
+            } catch (error) {
+                console.error("Erro ao carregar subcategoria: ", error);
+            }
+    
+            document.getElementById('buttonUpdateSubcategory').addEventListener('click', async function() {
+                try {
+                    const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
+                    await updateDoc(docRef, {
+                        subcategoryName: document.getElementById('editTextSubcategoryName').value,
+                        subcategoryImage: document.getElementById('editTextSubcategoryImage').value,
+                        maxIndex: parseInt(document.getElementById('editTextMaxIndex').value),
+                        questionsCount: parseInt(document.getElementById('editTextQuestionsCount').value),
+                        pointsPerQuestion: parseInt(document.getElementById('editTextpointsPerQuestion').value),
+                        time: parseInt(document.getElementById('editTextTime').value),
+                        isAdapted: document.getElementById('spinnerIsAdapted').value === "true"
+                    });
+    
+                    alert("Subcategoria atualizada com sucesso!");
+                    window.location.href = `subcategories.html?categoryId=${categoryId}`;
+                } catch (error) {
+                    console.error("Erro ao atualizar subcategoria: ", error);
+                    alert("Erro ao atualizar subcategoria.");
+                }
+            });
         };
-
-        document.getElementById('buttonUpdateSubcategory').addEventListener('click', async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoryId = urlParams.get('categoryId');
-            const subcategoryId = urlParams.get('subcategoryId');
-
-            await updateSubcategory(categoryId, subcategoryId);
-        });
-
+    
         fetchSubcategories(categoryId);
     </script>
-</body>
-</html>
+    
