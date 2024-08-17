@@ -33,7 +33,8 @@
     
     <!-- Inline Script to Import and Use fetchSubcategories -->
     <script type="module">
-        import { fetchSubcategories, editSubcategory, updateSubcategory } from './main.js';
+         import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+         import { db } from './firebase-config.js';
 
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
