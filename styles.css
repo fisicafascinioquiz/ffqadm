@@ -47,3 +47,15 @@ input, select {
     margin-bottom: 15px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
+
+#editSubcategoryContainer {
+    margin-top: 20px;
+}
+
+.subcategory-image {
+    width: 5px; /* Define a largura da imagem */
+    height: 5px; /* Define a altura da imagem */
+    object-fit: cover; /* Mantém a proporção da imagem */
+    display: block; /* Garante que a imagem se comporte como um bloco */
+    margin: 10px auto; /* Centraliza horizontalmente */
+}
