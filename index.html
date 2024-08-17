@@ -8,13 +8,54 @@
 </head>
 <body>
     <div class="container">
-        <button id="btnCategories">Categorias</button>
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Digite seu email">
+        <input type="password" id="password" placeholder="Digite sua senha">
+        <button id="loginBtn">Login</button>
+        <p id="loginError" style="color: red;"></p>
     </div>
-    <script src="firebase-config.js"></script>
-    <script type="module" src="main.js"></script>
-    <script>
-        document.getElementById('btnCategories').addEventListener('click', function() {
-            window.location.href = 'categories.html';
+
+    <script src="firebase-config.js" type="module"></script>
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Verificar se as credenciais são suas
+            try {
+                const docRef = doc(db, 'admin', 'credentials');
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (email === data.email && password === data.password) {
+                        // Credenciais correspondem
+                        signInWithEmailAndPassword(auth, email, password)
+                            .then((userCredential) => {
+                                // Login bem-sucedido, exibe o conteúdo
+                                document.querySelector('.container').innerHTML = `
+                                    <button id="btnCategories">Categorias</button>
+                                `;
+                                document.getElementById('btnCategories').addEventListener('click', function() {
+                                    window.location.href = 'categories.html';
+                                });
+                            })
+                            .catch((error) => {
+                                document.getElementById('loginError').textContent = "Erro: " + error.message;
+                            });
+                    } else {
+                        throw new Error('Credenciais inválidas.');
+                    }
+                } else {
+                    throw new Error('Documento não encontrado.');
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = "Erro: " + error.message;
+            }
         });
     </script>
 </body>
