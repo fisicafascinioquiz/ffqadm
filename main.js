@@ -35,6 +35,9 @@ export async function fetchSubcategories(categoryId) {
             subcategoriesContainer.innerHTML += `
                 <div class="card" onclick="navigateToQuestions('${categoryId}', '${doc.id}')">
                     <h3>${subcategory.subcategoryName}</h3>
+                    <p style="font-size: 0.9em; color: grey;">
+                        ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+                    </p>
                 </div>
             `;
         });
@@ -47,6 +50,7 @@ export async function fetchSubcategories(categoryId) {
         subcategoriesContainer.innerHTML = "<p>Erro ao carregar subcategorias.</p>";
     }
 }
+
 
 export async function fetchQuestions(categoryId, subcategoryId) {
     const questionsContainer = document.getElementById('questionsContainer');
@@ -162,6 +166,51 @@ async function addQuestion(categoryId, subcategoryId) {
         alert("Erro ao adicionar questão.");
     }
 }
+
+export async function editSubcategory(categoryId, subcategoryId) {
+    try {
+        const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const subcategory = docSnap.data();
+            document.getElementById('editTextSubcategoryName').value = subcategory.subcategoryName;
+            document.getElementById('editTextSubcategoryImage').value = subcategory.subcategoryImage;
+            document.getElementById('editTextMaxIndex').value = subcategory.maxIndex;
+            document.getElementById('editTextQuestionsCount').value = subcategory.questionsCount;
+            document.getElementById('editTextpointsPerQuestion').value = subcategory.pointsPerQuestion;
+            document.getElementById('editTextTime').value = subcategory.time;
+            document.getElementById('spinnerIsAdapted').value = subcategory.isAdapted ? "true" : "false";
+        } else {
+            alert("Subcategoria não encontrada.");
+        }
+    } catch (error) {
+        console.error("Erro ao carregar subcategoria: ", error);
+    }
+}
+
+export async function updateSubcategory(categoryId, subcategoryId) {
+    try {
+        const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
+        await updateDoc(docRef, {
+            subcategoryName: document.getElementById('editTextSubcategoryName').value,
+            subcategoryImage: document.getElementById('editTextSubcategoryImage').value,
+            maxIndex: parseInt(document.getElementById('editTextMaxIndex').value),
+            questionsCount: parseInt(document.getElementById('editTextQuestionsCount').value),
+            pointsPerQuestion: parseInt(document.getElementById('editTextpointsPerQuestion').value),
+            time: parseInt(document.getElementById('editTextTime').value),
+            isAdapted: document.getElementById('spinnerIsAdapted').value === "true"
+        });
+
+        alert("Subcategoria atualizada com sucesso!");
+        window.location.href = `subcategories.html?categoryId=${categoryId}`;
+    } catch (error) {
+        console.error("Erro ao atualizar subcategoria: ", error);
+        alert("Erro ao atualizar subcategoria.");
+    }
+}
+
+
 
 function navigateToSubcategories(categoryId) {
     window.location.href = `subcategories.html?categoryId=${categoryId}`;

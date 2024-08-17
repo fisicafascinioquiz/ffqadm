@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Subcategoria</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Editar Subcategoria</h2>
+        <input type="text" id="editTextSubcategoryName" placeholder="Nome da Subcategoria">
+        <input type="text" id="editTextSubcategoryImage" placeholder="URL da Imagem">
+        <input type="number" id="editTextMaxIndex" placeholder="Índice Máximo">
+        <input type="number" id="editTextQuestionsCount" placeholder="Quantidade de Questões">
+        <input type="number" id="editTextpointsPerQuestion" placeholder="Pontos por Questão">
+        <input type="number" id="editTextTime" placeholder="Tempo em Minutos">
+        <select id="spinnerIsAdapted">
+            <option value="true">Adaptada</option>
+            <option value="false">Não adaptada</option>
+        </select>
+        <button id="buttonUpdateSubcategory">Salvar</button>
+    </div>
+
+    <script type="module">
+        import { editSubcategory, updateSubcategory } from './main.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryId = urlParams.get('categoryId');
+        const subcategoryId = urlParams.get('subcategoryId');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            editSubcategory(categoryId, subcategoryId);
+        });
+
+        document.getElementById('buttonUpdateSubcategory').addEventListener('click', () => {
+            updateSubcategory(categoryId, subcategoryId);
+        });
+    </script>
+</body>
+</html>

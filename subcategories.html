@@ -9,6 +9,7 @@
 <body>
     <div class="container">
         <button id="buttonAddSubcategory">+ Subcategoria</button>
+        <button id="buttonEditSubcategory">Editar Subcategoria</button>
         <div id="subcategoriesContainer"></div>
     </div>
     
@@ -25,6 +26,10 @@
 
         document.getElementById('buttonAddSubcategory').addEventListener('click', function() {
             window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
+        });
+
+        document.getElementById('buttonEditSubcategory').addEventListener('click', function() {
+             window.location.href = `edit-subcategory.html?categoryId=${categoryId}`;
         });
 
         fetchSubcategories(categoryId);
