@@ -17,17 +17,33 @@
         <input type="text" id="editTextImageUrl" placeholder="URL da Imagem">
         <input type="number" id="editTextIndex" placeholder="Índice">
         <button id="buttonAddQuestion">Adicionar Questão</button>
+        <div class="formatted-question" id="formattedQuestion"></div>
     </div>
-    <<script type="module" src="firebase-config.js"></script>
+    <script type="module" src="firebase-config.js"></script>
     <script type="module" src="main.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
         const subcategoryId = urlParams.get('subcategoryId');
+        
+        
+        function formatScientificNotation(value) {
+    const match = value.match(/([0-9.]+)e(-?[0-9]+)/);
+    if (match) {
+        const base = match[1];
+        const exponent = match[2];
+        return `${base}<sup>${exponent}</sup>`;
+    }
+    return value;
+}
 
-        document.getElementById('buttonAddQuestion').addEventListener('click', function() {
-            addQuestion(categoryId, subcategoryId);
-        });
+document.getElementById('buttonAddQuestion').addEventListener('click', function() {
+    const question = document.getElementById('editTextQuestion').value;
+    document.getElementById('formattedQuestion').innerHTML = formatScientificNotation(question);
+    addQuestion(categoryId, subcategoryId);
+});
+
+        
     </script>
 </body>
 </html>

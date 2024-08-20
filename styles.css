@@ -59,3 +59,8 @@ input, select {
     display: block; /* Garante que a imagem se comporte como um bloco */
     margin: 10px auto; /* Centraliza horizontalmente */
 }
+
+.formatted-question sup {
+    font-size: 0.75em;
+    vertical-align: super;
+}

@@ -296,6 +296,7 @@ export async function updateSubcategory(categoryId, subcategoryId) {
     }
 }
 
+
 // Navigation functions
 function navigateToSubcategories(categoryId) {
     window.location.href = `subcategories.html?categoryId=${categoryId}`;
