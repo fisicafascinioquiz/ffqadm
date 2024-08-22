@@ -8,7 +8,10 @@
 </head>
 <body>
     <div class="container">
+        <!-- Novo botão para voltar à página de subcategorias -->
+        <button id="buttonBackToSubcategories">← Voltar para Subcategorias</button>
         <button id="buttonAddQuestion">+ Questão</button>
+        <button id="buttonEditQuestion">Editar Questão</button>
         <div id="questionsContainer"></div>
     </div>
 
@@ -16,19 +19,42 @@
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="main.js"></script>
     
-    <!-- Inline Script to Import and Use fetchQuestions -->
     <script type="module">
         import { fetchQuestions } from './main.js';
 
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
         const subcategoryId = urlParams.get('subcategoryId');
+        let selectedQuestionId = null;
+
+        // Adicionando funcionalidade ao botão "Voltar para Subcategorias"
+        document.getElementById('buttonBackToSubcategories').addEventListener('click', function() {
+            window.location.href = `subcategories.html?categoryId=${categoryId}`;
+        });
 
         document.getElementById('buttonAddQuestion').addEventListener('click', function() {
             window.location.href = `add-question.html?categoryId=${categoryId}&subcategoryId=${subcategoryId}`;
         });
 
-        fetchQuestions(categoryId, subcategoryId); // Call the function with the necessary parameters
+        document.getElementById('buttonEditQuestion').addEventListener('click', function() {
+            fetchQuestionsForEditing(categoryId, subcategoryId);
+        });
+
+        // Carregar questões normalmente (com botão de excluir)
+        fetchQuestions(categoryId, subcategoryId);
+
+        function fetchQuestionsForEditing(categoryId, subcategoryId) {
+    // Recarrega as questões sem o botão de excluir
+    fetchQuestions(categoryId, subcategoryId, false).then(() => {
+        const cards = document.querySelectorAll('#questionsContainer .card');
+        cards.forEach(card => {
+            card.addEventListener('click', function () {
+                selectedQuestionId = this.dataset.docId;
+                window.location.href = `edit-question.html?categoryId=${categoryId}&subcategoryId=${subcategoryId}&questionId=${selectedQuestionId}`;
+            });
+        });
+    });
+}
     </script>
 </body>
 </html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Questão</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Editar Questão</h2>
+        <form id="editQuestionForm">
+            <input type="text" id="editTextQuestion" placeholder="Pergunta" required>
+            <input type="text" id="editTextOption1" placeholder="Opção 1">
+            <input type="text" id="editTextOption2" placeholder="Opção 2">
+            <input type="text" id="editTextOption3" placeholder="Opção 3">
+            <input type="text" id="editTextOption4" placeholder="Opção 4">
+            <input type="text" id="editTextAnswer" placeholder="Resposta" required>
+            <input type="text" id="editTextImageUrl" placeholder="URL da Imagem">
+            <input type="text" id="editTextIndex" placeholder="Índice" required>
+            <button type="submit" id="buttonSaveQuestion">Salvar Questão</button>
+        </form>
+    </div>
+
+    <!-- Firebase and Main Script Modules -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="main.js"></script>
+
+    <script type="module">
+        import { editQuestion, updateQuestion } from './main.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryId = urlParams.get('categoryId');
+        const subcategoryId = urlParams.get('subcategoryId');
+        const questionId = urlParams.get('questionId');
+
+        // Carregar os dados da questão ao carregar a página
+        document.addEventListener('DOMContentLoaded', async () => {
+            await editQuestion(categoryId, subcategoryId, questionId);
+        });
+
+        // Salvar as alterações feitas na questão
+        document.getElementById('editQuestionForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            await updateQuestion(categoryId, subcategoryId, questionId);
+        });
+    </script>
+</body>
+</html>

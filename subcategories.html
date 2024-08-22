@@ -8,6 +8,8 @@
 </head>
 <body>
     <div class="container">
+        <!-- Botão para voltar para a página de categorias -->
+        <button id="buttonBackToCategories">← Voltar para Categorias</button>
         <button id="buttonAddSubcategory">+ Subcategoria</button>
         <button id="buttonEditSubcategory">Editar Subcategoria</button>
         <div id="subcategoriesContainer"></div>
@@ -40,7 +42,12 @@
     
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
-    
+        
+        // Adicionando funcionalidade ao botão "Voltar para Categorias"
+        document.getElementById('buttonBackToCategories').addEventListener('click', function() {
+            window.location.href = 'categories.html';
+        });
+
         document.getElementById('buttonAddSubcategory').addEventListener('click', function() {
             window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
         });
@@ -55,12 +62,12 @@
                     const subcategory = doc.data();
                     subcategoriesContainer.innerHTML += `
                         <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${doc.id}')">
-        <h3>${subcategory.subcategoryName}</h3>
-        <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
-        <p style="font-size: 0.9em; color: grey;">
-            ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
-        </p>
-    </div>
+                            <h3>${subcategory.subcategoryName}</h3>
+                            <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
+                            <p style="font-size: 0.9em; color: grey;">
+                                ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+                            </p>
+                        </div>
                     `;
                 });
     
