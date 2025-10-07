@@ -53,12 +53,14 @@ input, select {
 }
 
 .subcategory-image {
-    width: 30px; /* Define a largura da imagem */
-    height: 30px; /* Define a altura da imagem */
-    object-fit: cover; /* Mantém a proporção da imagem */
-    display: block; /* Garante que a imagem se comporte como um bloco */
-    margin: 10px auto; /* Centraliza horizontalmente */
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin: 10px auto;
 }
+
 
 .formatted-question sup {
     font-size: 0.75em;
