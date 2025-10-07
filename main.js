@@ -4,11 +4,25 @@ import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-fir
 
 
 function formatDriveLink(url) {
-    const match = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)\//);
-    if (match && match[1]) {
-        return `https://drive.google.com/uc?id=${match[1]}`;
-    }
+  if (!url) return "";
+
+  url = url.trim();
+
+  // já é link direto ou do Googleusercontent
+  if (url.includes("drive.google.com/uc?export=view&id=") || url.includes("lh3.googleusercontent.com")) {
     return url;
+  }
+
+  // tenta capturar o ID
+  const match = url.match(/(?:\/file\/d\/|id=|open\?id=)([A-Za-z0-9_-]{20,})/);
+  const id = match ? match[1] : /^[A-Za-z0-9_-]{20,}$/.test(url) ? url : null;
+
+  if (id) {
+    return `https://drive.google.com/uc?export=view&id=${id}`;
+  }
+
+  // se for um link incorreto, retorna vazio
+  return "";
 }
 
 // Fetch categories and display them in the categories container
