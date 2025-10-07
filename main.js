@@ -8,18 +8,23 @@ function formatDriveLink(url) {
 
   url = url.trim();
 
-   // 🧩 Ajusta imagens do Googleusercontent para 120x120
+  // 🧩 1. Links diretos do Googleusercontent — força tamanho 120x120
   if (url.includes("lh3.googleusercontent.com")) {
-    // Remove parâmetros antigos e força o tamanho desejado
-    return url.replace(/\=s\d+/, "") + "=s120";
-  }
-  
-  // já é um link direto ou do Googleusercontent
-  if (url.includes("drive.google.com/uc?") || url.includes("lh3.googleusercontent.com")) {
-    return url;
+    // Remove parâmetros antigos (=sXX, =wXX-hXX, etc.) e aplica novo tamanho
+    url = url.replace(/(\=s\d+|\=w\d+\-h\d+|\=w\d+)/, "");
+    return `${url}=s120`; // força imagem pequena e leve
   }
 
-  // tenta capturar o ID
+  // 🧩 2. Links diretos do Drive (uc?id= ou uc?export=view&id=)
+  if (url.includes("drive.google.com/uc?")) {
+    const match = url.match(/id=([A-Za-z0-9_-]{20,})/);
+    const id = match ? match[1] : null;
+    if (id) {
+      return `https://drive.google.com/uc?export=view&id=${id}`;
+    }
+  }
+
+  // 🧩 3. Outros formatos do Drive (file/d/, open?id=, etc.)
   const match = url.match(/(?:\/file\/d\/|id=|open\?id=)([A-Za-z0-9_-]{20,})/);
   const id = match ? match[1] : /^[A-Za-z0-9_-]{20,}$/.test(url) ? url : null;
 
@@ -27,8 +32,10 @@ function formatDriveLink(url) {
     return `https://drive.google.com/uc?export=view&id=${id}`;
   }
 
+  // 🧩 4. Se nada funcionar, retorna vazio (imagem padrão será usada)
   return "";
 }
+
 
 // Fetch categories and display them in the categories container
 export async function fetchCategories() {
