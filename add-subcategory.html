@@ -8,24 +8,27 @@
 </head>
 <body>
     <div class="container">
-        <h2>Adicionar Subcategoria</h2>
         <input type="text" id="editTextSubcategoryName" placeholder="Nome da Subcategoria">
         <input type="text" id="editTextSubcategoryImage" placeholder="URL da Imagem da Subcategoria">
         <input type="number" id="editTextMaxIndex" placeholder="Max Index">
         <input type="number" id="editTextQuestionsCount" placeholder="Questions Count">
-        <input type="number" id="editTextpointsPerQuestion" placeholder="Points Per Question">
-        <input type="number" id="editTextTime" placeholder="Time">
+        <input type="number" id="editTextpointsPerQuestion" placeholder="pointsPerQuestion">
+        <input type="number" id="editTextTime" placeholder="Tempo em Minutos">
+
+        <!-- 🆕 NOVOS CAMPOS -->
+        <input type="number" id="editTextOrder" placeholder="Ordem de Exibição (order)">
+        <input type="text" id="editTextEbookPdfUrl" placeholder="URL do PDF do Ebook (ebookPdfUrl)">
+
         <select id="spinnerIsAdapted">
             <option value="true">Adaptado</option>
             <option value="false">Não Adaptado</option>
         </select>
-        <input type="text" id="editTextOrder" placeholder="Order">
-        <input type="text" id="editTextEbookPdfUrl" placeholder="URL do Ebook (Google Drive)">
         <button id="buttonAddSubcategory">Adicionar</button>
     </div>
 
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="main.js"></script>
+
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');

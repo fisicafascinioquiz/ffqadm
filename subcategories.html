@@ -8,60 +8,64 @@
 </head>
 <body>
     <div class="container">
-        <!-- Botão para voltar para a página de categorias -->
         <button id="buttonBackToCategories">← Voltar para Categorias</button>
         <button id="buttonAddSubcategory">+ Subcategoria</button>
         <button id="buttonEditSubcategory">Editar Subcategoria</button>
+
         <div id="subcategoriesContainer"></div>
+
         <div id="editSubcategoryContainer" style="display:none;">
             <h2>Editar Subcategoria</h2>
-            <title>Editar Subcategorias</title>
+
             <input type="text" id="editTextSubcategoryName" placeholder="Nome da Subcategoria">
             <input type="text" id="editTextSubcategoryImage" placeholder="URL da Imagem">
             <input type="number" id="editTextMaxIndex" placeholder="Índice Máximo">
             <input type="number" id="editTextQuestionsCount" placeholder="Quantidade de Questões">
             <input type="number" id="editTextpointsPerQuestion" placeholder="Pontos por Questão">
             <input type="number" id="editTextTime" placeholder="Tempo em Minutos">
+
+            <!-- 🆕 CAMPOS ADICIONADOS -->
+            <input type="number" id="editTextOrder" placeholder="Ordem de Exibição (order)">
+            <input type="text" id="editTextEbookPdfUrl" placeholder="URL do PDF do Ebook (ebookPdfUrl)">
+
             <select id="spinnerIsAdapted">
                 <option value="true">Adaptada</option>
                 <option value="false">Não adaptada</option>
             </select>
+
             <button id="buttonUpdateSubcategory">Salvar</button>
         </div>
     </div>
-    
-    <!-- Firebase and Main Script Modules -->
+
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="main.js"></script>
-    
-    <!-- Inline Script to Import and Use fetchSubcategories -->
+
     <script type="module">
         import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
         import { db } from './firebase-config.js';
-        import { fetchSubcategories } from './main.js';  // Certifique-se de importar corretamente
-    
+        import { fetchSubcategories } from './main.js';
+
         const urlParams = new URLSearchParams(window.location.search);
         const categoryId = urlParams.get('categoryId');
-        
-        // Adicionando funcionalidade ao botão "Voltar para Categorias"
-        document.getElementById('buttonBackToCategories').addEventListener('click', function() {
+
+        document.getElementById('buttonBackToCategories').addEventListener('click', () => {
             window.location.href = 'categories.html';
         });
 
-        document.getElementById('buttonAddSubcategory').addEventListener('click', function() {
+        document.getElementById('buttonAddSubcategory').addEventListener('click', () => {
             window.location.href = `add-subcategory.html?categoryId=${categoryId}`;
         });
 
-        document.getElementById('buttonEditSubcategory').addEventListener('click', async function() {
+        document.getElementById('buttonEditSubcategory').addEventListener('click', async () => {
             const subcategoriesContainer = document.getElementById('subcategoriesContainer');
-            subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias
-    
+            subcategoriesContainer.innerHTML = "";
+
             try {
                 const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
-                querySnapshot.forEach((doc) => {
-                    const subcategory = doc.data();
+                querySnapshot.forEach((docItem) => {
+                    const subcategory = docItem.data();
                     subcategoriesContainer.innerHTML += `
-                        <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${doc.id}')">
+                        <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${docItem.id}')">
                             <h3>${subcategory.subcategoryName}</h3>
                             <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
                             <p style="font-size: 0.9em; color: grey;">
@@ -70,7 +74,7 @@
                         </div>
                     `;
                 });
-    
+
                 if (querySnapshot.empty) {
                     subcategoriesContainer.innerHTML = "<p>Nenhuma subcategoria encontrada.</p>";
                 }
@@ -79,17 +83,17 @@
                 subcategoriesContainer.innerHTML = "<p>Erro ao carregar subcategorias.</p>";
             }
         });
-    
+
         window.loadSubcategoryForEditing = async function(categoryId, subcategoryId) {
             const editContainer = document.getElementById('editSubcategoryContainer');
             const subcategoriesContainer = document.getElementById('subcategoriesContainer');
-            subcategoriesContainer.style.display = 'none'; // Oculta a lista de subcategorias
-            editContainer.style.display = 'block'; // Exibe os campos de edição
-    
+            subcategoriesContainer.style.display = 'none';
+            editContainer.style.display = 'block';
+
             try {
                 const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
                 const docSnap = await getDoc(docRef);
-    
+
                 if (docSnap.exists()) {
                     const subcategory = docSnap.data();
                     document.getElementById('editTextSubcategoryName').value = subcategory.subcategoryName;
@@ -98,6 +102,8 @@
                     document.getElementById('editTextQuestionsCount').value = subcategory.questionsCount;
                     document.getElementById('editTextpointsPerQuestion').value = subcategory.pointsPerQuestion;
                     document.getElementById('editTextTime').value = subcategory.time;
+                    document.getElementById('editTextOrder').value = subcategory.order || "";
+                    document.getElementById('editTextEbookPdfUrl').value = subcategory.ebookPdfUrl || "";
                     document.getElementById('spinnerIsAdapted').value = subcategory.isAdapted ? "true" : "false";
                 } else {
                     alert("Subcategoria não encontrada.");
@@ -105,7 +111,7 @@
             } catch (error) {
                 console.error("Erro ao carregar subcategoria: ", error);
             }
-    
+
             document.getElementById('buttonUpdateSubcategory').addEventListener('click', async function() {
                 try {
                     const docRef = doc(db, "categories", categoryId, "subcategories", subcategoryId);
@@ -116,9 +122,11 @@
                         questionsCount: parseInt(document.getElementById('editTextQuestionsCount').value),
                         pointsPerQuestion: parseInt(document.getElementById('editTextpointsPerQuestion').value),
                         time: parseInt(document.getElementById('editTextTime').value),
+                        order: parseInt(document.getElementById('editTextOrder').value) || 0, // 🆕
+                        ebookPdfUrl: document.getElementById('editTextEbookPdfUrl').value || "", // 🆕
                         isAdapted: document.getElementById('spinnerIsAdapted').value === "true"
                     });
-    
+
                     alert("Subcategoria atualizada com sucesso!");
                     window.location.href = `subcategories.html?categoryId=${categoryId}`;
                 } catch (error) {
@@ -127,7 +135,7 @@
                 }
             });
         };
-    
+
         fetchSubcategories(categoryId);
     </script>
 </body>
