@@ -73,13 +73,13 @@ input:focus, select:focus {
 
 /* ======= IMAGENS ======= */
 .subcategory-image {
-  width: 100%;
-  max-width: 200px; /* tamanho máximo visível */
-  height: auto; /* mantém a proporção */
-  object-fit: contain; /* evita corte */
+  width: 120px;
+  height: 120px;
+  object-fit: cover; /* corta e mantém proporção */
   border-radius: 10px;
   display: block;
   margin: 10px auto;
+  background-color: #f8f8f8;
 }
 
 /* ======= DELETE BUTTON ======= */
