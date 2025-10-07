@@ -50,29 +50,44 @@ export async function fetchCategories() {
 
 export async function fetchSubcategories(categoryId) {
     const subcategoriesContainer = document.getElementById('subcategoriesContainer');
-    subcategoriesContainer.innerHTML = ""; // Clear the container before adding subcategories
+    subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias
+
     try {
         const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
+
         querySnapshot.forEach((doc) => {
             const subcategory = doc.data();
             const card = document.createElement('div');
             card.classList.add('card');
-            
-            card.innerHTML = `
-                 <h3>${subcategory.subcategoryName}</h3>
-    <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
-    <p style="font-size: 0.9em; color: grey;">
-        ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
-    </p>
-    <button class="delete-btn">x</button>
-`;
 
+            // 🧩 Garante que o link do Google Drive tenha formato correto
+            const formattedImage = formatDriveLink(subcategory.subcategoryImage);
+
+            // 🧩 Define imagem padrão se a imagem estiver ausente
+            const imageSrc = formattedImage || "https://via.placeholder.com/120?text=Sem+Imagem";
+
+            card.innerHTML = `
+                <h3>${subcategory.subcategoryName}</h3>
+                <img 
+                    src="${imageSrc}" 
+                    alt="${subcategory.subcategoryName}" 
+                    class="subcategory-image"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/120?text=Erro+na+Imagem';"
+                >
+                <p style="font-size: 0.9em; color: grey;">
+                    ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+                </p>
+                <button class="delete-btn">x</button>
+            `;
+
+            // 🧭 Ao clicar no card, vai para as questões
             card.addEventListener('click', () => {
                 navigateToQuestions(categoryId, doc.id);
             });
 
+            // ❌ Botão de deletar subcategoria
             card.querySelector('.delete-btn').addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevents the click from propagating to the card
+                event.stopPropagation(); // Evita que o clique vá para o card
                 confirmDelete('subcategory', doc.id, categoryId);
             });
 
