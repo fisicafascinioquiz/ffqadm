@@ -8,6 +8,12 @@ function formatDriveLink(url) {
 
   url = url.trim();
 
+   // 🧩 Ajusta imagens do Googleusercontent para 120x120
+  if (url.includes("lh3.googleusercontent.com")) {
+    // Remove parâmetros antigos e força o tamanho desejado
+    return url.replace(/\=s\d+/, "") + "=s120";
+  }
+  
   // já é um link direto ou do Googleusercontent
   if (url.includes("drive.google.com/uc?") || url.includes("lh3.googleusercontent.com")) {
     return url;
