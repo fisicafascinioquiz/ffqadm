@@ -8,8 +8,8 @@ function formatDriveLink(url) {
 
   url = url.trim();
 
-  // já é link direto ou do Googleusercontent
-  if (url.includes("drive.google.com/uc?export=view&id=") || url.includes("lh3.googleusercontent.com")) {
+  // já é um link direto ou do Googleusercontent
+  if (url.includes("drive.google.com/uc?") || url.includes("lh3.googleusercontent.com")) {
     return url;
   }
 
@@ -21,7 +21,6 @@ function formatDriveLink(url) {
     return `https://drive.google.com/uc?export=view&id=${id}`;
   }
 
-  // se for um link incorreto, retorna vazio
   return "";
 }
 
@@ -81,18 +80,18 @@ export async function fetchSubcategories(categoryId) {
             const imageSrc = formattedImage || "https://via.placeholder.com/120?text=Sem+Imagem";
 
             card.innerHTML = `
-  <h3><strong>${subcategory.order || ""}. ${subcategory.subcategoryName}</strong></h3>
-  <img 
-    src="${subcategory.subcategoryImage}" 
-    alt="${subcategory.subcategoryName}" 
-    class="subcategory-image"
-    onerror="this.onerror=null;this.src='https://via.placeholder.com/120?text=Erro+na+Imagem';"
-  >
-  <p style="font-size: 0.9em; color: grey;">
-    ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
-  </p>
-  <button class="delete-btn">x</button>
-`;
+                <h3>${subcategory.subcategoryName}</h3>
+                <img 
+                    src="${formatDriveLink(subcategory.subcategoryImage)}" 
+                    alt="${subcategory.subcategoryName}" 
+                    class="subcategory-image"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/120?text=Erro+na+Imagem';"
+                >
+                <p style="font-size: 0.9em; color: grey;">
+                    ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+                </p>
+                <button class="delete-btn">x</button>
+            `;
 
             // 🧭 Ao clicar no card, vai para as questões
             card.addEventListener('click', () => {
