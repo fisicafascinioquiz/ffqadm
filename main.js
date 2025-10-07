@@ -81,18 +81,18 @@ export async function fetchSubcategories(categoryId) {
             const imageSrc = formattedImage || "https://via.placeholder.com/120?text=Sem+Imagem";
 
             card.innerHTML = `
-                <h3>${subcategory.subcategoryName}</h3>
-                <img 
-                    src="${formatDriveLink(subcategory.subcategoryImage)}" 
-                    alt="${subcategory.subcategoryName}" 
-                    class="subcategory-image"
-                    onerror="this.onerror=null;this.src='https://via.placeholder.com/120?text=Erro+na+Imagem';"
-                >
-                <p style="font-size: 0.9em; color: grey;">
-                    ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
-                </p>
-                <button class="delete-btn">x</button>
-            `;
+  <h3><strong>${subcategory.order || ""}. ${subcategory.subcategoryName}</strong></h3>
+  <img 
+    src="${subcategory.subcategoryImage}" 
+    alt="${subcategory.subcategoryName}" 
+    class="subcategory-image"
+    onerror="this.onerror=null;this.src='https://via.placeholder.com/120?text=Erro+na+Imagem';"
+  >
+  <p style="font-size: 0.9em; color: grey;">
+    ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
+  </p>
+  <button class="delete-btn">x</button>
+`;
 
             // 🧭 Ao clicar no card, vai para as questões
             card.addEventListener('click', () => {
