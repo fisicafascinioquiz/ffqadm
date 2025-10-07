@@ -98,7 +98,8 @@ export async function fetchSubcategories(categoryId) {
                     src="${formatDriveLink(subcategory.subcategoryImage)}" 
                     alt="${subcategory.subcategoryName}" 
                     class="subcategory-image"
-                    onerror="this.onerror=null;this.src='https://via.placeholder.com/120?text=Erro+na+Imagem';"
+                   onerror="this.onerror=null;this.src='https://placehold.co/120x120?text=Erro+na+Imagem';"
+
                 >
                 <p style="font-size: 0.9em; color: grey;">
                     ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
