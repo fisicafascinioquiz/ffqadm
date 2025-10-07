@@ -2,6 +2,15 @@ import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc } fro
 import { db } from "./firebase-config.js";
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
+
+function formatDriveLink(url) {
+    const match = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)\//);
+    if (match && match[1]) {
+        return `https://drive.google.com/uc?id=${match[1]}`;
+    }
+    return url;
+}
+
 // Fetch categories and display them in the categories container
 export async function fetchCategories() {
     const categoriesContainer = document.getElementById('categoriesContainer');
@@ -240,7 +249,9 @@ export async function addQuestion(categoryId, subcategoryId) {
 
 export async function addCategory() {
     const categoryName = document.getElementById('editTextCategoryName').value;
-    const categoryImage = document.getElementById('editTextCategoryImage').value;
+   let categoryImage = document.getElementById('editTextCategoryImage').value.trim();
+categoryImage = formatDriveLink(categoryImage);
+
 
     if (categoryName === "" || categoryImage === "") {
         alert("Por favor, preencha todos os campos.");
@@ -263,13 +274,16 @@ export async function addCategory() {
 
 export async function addSubcategory(categoryId) {
     const subcategoryName = document.getElementById('editTextSubcategoryName').value;
-    const subcategoryImage = document.getElementById('editTextSubcategoryImage').value;
+    let subcategoryImage = document.getElementById('editTextSubcategoryImage').value.trim();
+subcategoryImage = formatDriveLink(subcategoryImage);
     const maxIndex = document.getElementById('editTextMaxIndex').value;
     const questionsCount = document.getElementById('editTextQuestionsCount').value;
     const pointsPerQuestion = document.getElementById('editTextpointsPerQuestion').value;
     const time = document.getElementById('editTextTime').value;
     const order = document.getElementById('editTextOrder').value; // 🆕
-    const ebookPdfUrl = document.getElementById('editTextEbookPdfUrl').value; // 🆕
+    let ebookPdfUrl = document.getElementById('editTextEbookPdfUrl').value; // 🆕
+ebookPdfUrl = formatDriveLink(ebookPdfUrl);
+
 
     const isAdapted = document.getElementById('spinnerIsAdapted').value === "true";
 
