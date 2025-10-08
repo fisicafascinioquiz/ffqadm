@@ -4,36 +4,42 @@ import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-fir
 
 
 function formatDriveLink(url) {
-  if (!url) return "";
+    if (!url) return "";
 
-  url = url.trim();
+    url = url.trim();
 
-  // 🧩 1. Links diretos do Googleusercontent — força tamanho 120x120
-  if (url.includes("lh3.googleusercontent.com")) {
-    // Remove parâmetros antigos (=sXX, =wXX-hXX, etc.) e aplica novo tamanho
-    url = url.replace(/(\=s\d+|\=w\d+\-h\d+|\=w\d+)/, "");
-    return `${url}=s120`; // força imagem pequena e leve
-  }
-
-  // 🧩 2. Links diretos do Drive (uc?id= ou uc?export=view&id=)
-  if (url.includes("drive.google.com/uc?")) {
-    const match = url.match(/id=([A-Za-z0-9_-]{20,})/);
-    const id = match ? match[1] : null;
-    if (id) {
-      return `https://drive.google.com/uc?export=view&id=${id}`;
+    // Se já for um link do tipo uc?id=, apenas garantir export=view
+    if (url.includes("drive.google.com/uc")) {
+        // Verifica se já tem export=view
+        const hasExport = url.includes("export=view");
+        const idMatch = url.match(/id=([A-Za-z0-9_-]+)/);
+        const id = idMatch ? idMatch[1] : null;
+        if (id) {
+            if (hasExport) {
+                return url;
+            } else {
+                // adiciona export=view
+                return `https://drive.google.com/uc?export=view&id=${id}`;
+            }
+        }
+        // se algo estranho, retorna url original
+        return url;
     }
-  }
 
-  // 🧩 3. Outros formatos do Drive (file/d/, open?id=, etc.)
-  const match = url.match(/(?:\/file\/d\/|id=|open\?id=)([A-Za-z0-9_-]{20,})/);
-  const id = match ? match[1] : /^[A-Za-z0-9_-]{20,}$/.test(url) ? url : null;
+    // Se for link no formato file/d/
+    const match = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)/);
+    if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
 
-  if (id) {
-    return `https://drive.google.com/uc?export=view&id=${id}`;
-  }
+    // Se for link open?id=
+    const matchOpen = url.match(/open\?id=([A-Za-z0-9_-]+)/);
+    if (matchOpen && matchOpen[1]) {
+        return `https://drive.google.com/uc?export=view&id=${matchOpen[1]}`;
+    }
 
-  // 🧩 4. Se nada funcionar, retorna vazio (imagem padrão será usada)
-  return "";
+    // Caso não seja link do Drive manipulado, retorna ele mesmo
+    return url;
 }
 
 
