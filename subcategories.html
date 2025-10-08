@@ -74,7 +74,7 @@
                     subcategoriesContainer.innerHTML += `
                         <div class="card" onclick="loadSubcategoryForEditing('${categoryId}', '${docItem.id}')">
                             <h3>${subcategory.subcategoryName}</h3>
-                            <img src="${subcategory.subcategoryImage}" alt="${subcategory.subcategoryName}" class="subcategory-image">
+                            <img src="${formatDriveLink(subcategory.subcategoryImage)}" alt="${subcategory.subcategoryName}" class="subcategory-image">
                             <p style="font-size: 0.9em; color: grey;">
                                 ${subcategory.isAdapted ? "Adaptada" : "Não adaptada"}
                             </p>
