@@ -8,32 +8,31 @@ export function formatDriveLink(url) {
 
     url = url.trim();
 
-    // 1️⃣ Se já for um link direto do tipo "uc?id=", mantém (garante export=view)
+    // ✅ Se já for um link do tipo uc?id=, extrai o ID e converte para lh3.googleusercontent
     if (url.includes("drive.google.com/uc")) {
         const idMatch = url.match(/id=([A-Za-z0-9_-]+)/);
         const id = idMatch ? idMatch[1] : null;
         if (id) {
-            return `https://drive.google.com/uc?id=${id}`;
+            return `https://lh3.googleusercontent.com/d/${id}=s120`;
         }
         return url;
     }
 
-    // 2️⃣ Se for no formato padrão "file/d/ID/"
+    // Se for no formato padrão "file/d/ID/"
     const matchFile = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)/);
     if (matchFile && matchFile[1]) {
         const fileId = matchFile[1];
-        // Usa o servidor interno de imagens do Google (funciona em <img>)
         return `https://lh3.googleusercontent.com/d/${fileId}=s120`;
     }
 
-    // 3️⃣ Se for link "open?id="
+    // Se for link "open?id="
     const matchOpen = url.match(/open\?id=([A-Za-z0-9_-]+)/);
     if (matchOpen && matchOpen[1]) {
         const fileId = matchOpen[1];
         return `https://lh3.googleusercontent.com/d/${fileId}=s120`;
     }
 
-    // 4️⃣ Se não for do Drive, retorna original
+    // Se não for do Drive, retorna original
     return url;
 }
 
