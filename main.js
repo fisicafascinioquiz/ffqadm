@@ -3,7 +3,7 @@ import { db } from "./firebase-config.js";
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 
-function formatDriveLink(url) {
+export function formatDriveLink(url) {
     if (!url) return "";
 
     url = url.trim();
