@@ -29,7 +29,7 @@ export function formatDriveLink(url) {
     // Se for link no formato file/d/
     const match = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)/);
     if (match && match[1]) {
-        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+        return `https://lh3.googleusercontent.com/d/${match[1]}=s120`;
     }
 
     // Se for link open?id=
