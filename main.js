@@ -95,7 +95,7 @@ export async function fetchSubcategories(categoryId) {
             card.innerHTML = `
                 <h3>${subcategory.subcategoryName}</h3>
                 <img 
-                    src="${formatDriveLink(subcategory.subcategoryImage)}" 
+                    src="${subcategory.subcategoryImage}" 
                     alt="${subcategory.subcategoryName}" 
                     class="subcategory-image"
                    onerror="this.onerror=null;this.src='https://placehold.co/120x120?text=Erro+na+Imagem';"
