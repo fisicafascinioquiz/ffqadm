@@ -8,39 +8,35 @@ export function formatDriveLink(url) {
 
     url = url.trim();
 
-    // Se já for um link do tipo uc?id=, apenas garantir export=view
+    // 1️⃣ Se já for um link direto do tipo "uc?id=", mantém (garante export=view)
     if (url.includes("drive.google.com/uc")) {
-        // Verifica se já tem export=view
-        const hasExport = url.includes("export=view");
         const idMatch = url.match(/id=([A-Za-z0-9_-]+)/);
         const id = idMatch ? idMatch[1] : null;
         if (id) {
-            if (hasExport) {
-                return url;
-            } else {
-                // adiciona export=view
-                return `https://drive.google.com/uc?export=view&id=${id}`;
-            }
+            return `https://drive.google.com/uc?id=${id}`;
         }
-        // se algo estranho, retorna url original
         return url;
     }
 
-    // Se for link no formato file/d/
-    const match = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)/);
-    if (match && match[1]) {
-        return `https://lh3.googleusercontent.com/d/${match[1]}=s120`;
+    // 2️⃣ Se for no formato padrão "file/d/ID/"
+    const matchFile = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)/);
+    if (matchFile && matchFile[1]) {
+        const fileId = matchFile[1];
+        // Usa o servidor interno de imagens do Google (funciona em <img>)
+        return `https://lh3.googleusercontent.com/d/${fileId}=s120`;
     }
 
-    // Se for link open?id=
+    // 3️⃣ Se for link "open?id="
     const matchOpen = url.match(/open\?id=([A-Za-z0-9_-]+)/);
     if (matchOpen && matchOpen[1]) {
-        return `https://drive.google.com/uc?export=view&id=${matchOpen[1]}`;
+        const fileId = matchOpen[1];
+        return `https://lh3.googleusercontent.com/d/${fileId}=s120`;
     }
 
-    // Caso não seja link do Drive manipulado, retorna ele mesmo
+    // 4️⃣ Se não for do Drive, retorna original
     return url;
 }
+
 
 
 // Fetch categories and display them in the categories container
