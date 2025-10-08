@@ -86,12 +86,6 @@ export async function fetchSubcategories(categoryId) {
             const card = document.createElement('div');
             card.classList.add('card');
 
-            // 🧩 Garante que o link do Google Drive tenha formato correto
-            const formattedImage = formatDriveLink(subcategory.subcategoryImage);
-
-            // 🧩 Define imagem padrão se a imagem estiver ausente
-            const imageSrc = formattedImage || "https://via.placeholder.com/120?text=Sem+Imagem";
-
             card.innerHTML = `
                 <h3>${subcategory.subcategoryName}</h3>
                 <img 
