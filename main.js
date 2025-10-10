@@ -1,6 +1,17 @@
-import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { 
+    getFirestore, 
+    collection, 
+    getDocs, 
+    addDoc, 
+    deleteDoc, 
+    doc, 
+    getDoc, 
+    updateDoc, 
+    query, 
+    orderBy 
+} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
 import { db } from "./firebase-config.js";
-import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 
 export function formatDriveLink(url) {
@@ -138,8 +149,6 @@ export async function fetchSubcategories(categoryId) {
     }
 }
 
-// Fetch questions and display them in the questions container
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 export async function fetchQuestions(categoryId, subcategoryId, showDeleteButton = true) {
     const questionsContainer = document.getElementById('questionsContainer');
