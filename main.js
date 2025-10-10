@@ -30,6 +30,23 @@ export function formatDriveLink(url) {
     // Caso não seja link do Drive, retorna original
     return url;
 }
+export function formatDriveImageLink(url) {
+    if (!url) return "";
+
+    url = url.trim();
+
+    const matchFile = url.match(/https:\/\/drive\.google\.com\/file\/d\/([^/]+)/);
+    const matchOpen = url.match(/open\?id=([A-Za-z0-9_-]+)/);
+    const matchUc = url.match(/id=([A-Za-z0-9_-]+)/);
+
+    const fileId = matchFile?.[1] || matchOpen?.[1] || matchUc?.[1];
+
+    if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}=s120`;
+    }
+
+    return url;
+}
 
 
 
@@ -86,7 +103,7 @@ export async function fetchSubcategories(categoryId) {
             card.innerHTML = `
                 <h3>${subcategory.subcategoryName}</h3>
                 <img 
-                    src="${formatDriveLink(subcategory.subcategoryImage)}" 
+                    src="${formatDriveImageLink(subcategory.subcategoryImage)}" 
                     alt="${subcategory.subcategoryName}" 
                     class="subcategory-image"
                    onerror="this.onerror=null;this.src='https://placehold.co/120x120?text=Erro+na+Imagem';"
@@ -283,7 +300,7 @@ export async function addQuestion(categoryId, subcategoryId) {
 export async function addCategory() {
     const categoryName = document.getElementById('editTextCategoryName').value;
    let categoryImage = document.getElementById('editTextCategoryImage').value.trim();
-categoryImage = formatDriveLink(categoryImage);
+categoryImage = formatDriveImageLink(categoryImage);
 
 
     if (categoryName === "" || categoryImage === "") {
@@ -308,7 +325,7 @@ categoryImage = formatDriveLink(categoryImage);
 export async function addSubcategory(categoryId) {
     const subcategoryName = document.getElementById('editTextSubcategoryName').value;
     let subcategoryImage = document.getElementById('editTextSubcategoryImage').value.trim();
-subcategoryImage = formatDriveLink(subcategoryImage);
+subcategoryImage = formatDriveImageLink(subcategoryImage);
     const maxIndex = document.getElementById('editTextMaxIndex').value;
     const questionsCount = document.getElementById('editTextQuestionsCount').value;
     const pointsPerQuestion = document.getElementById('editTextpointsPerQuestion').value;
