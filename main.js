@@ -140,28 +140,41 @@ export async function fetchSubcategories(categoryId) {
 
 // Fetch questions and display them in the questions container
 export async function fetchQuestions(categoryId, subcategoryId, showDeleteButton = true) {
-    const questionsContainer = document.getElementById('questionsContainer');
-    questionsContainer.innerHTML = ""; // Clear the container before adding questions
-    try {
-        const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories", subcategoryId, "questions"));
-        querySnapshot.forEach((doc) => {
-            const question = doc.data();
-            questionsContainer.innerHTML += `
-                <div class="card" data-doc-id="${doc.id}">
-                    <h3>Questão ${question.index}</h3>
-                    <p>${question.question}</p>
-                    ${showDeleteButton ? `<button class="delete-btn" onclick="confirmDelete('question', '${doc.id}', '${categoryId}', '${subcategoryId}')">x</button>` : ""}
-                </div>
-            `;
-        });
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
 
-        if (querySnapshot.empty) {
-            questionsContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+    const questionsRef = collection(db, 'categories', categoryId, 'subcategories', subcategoryId, 'questions');
+    const snapshot = await getDocs(questionsRef);
+
+    let questions = [];
+    snapshot.forEach(doc => {
+        questions.push({ id: doc.id, ...doc.data() });
+    });
+
+    // ✅ Ordenar pelo campo "index" em ordem crescente
+    questions.sort((a, b) => a.index - b.index);
+
+    // Renderizar os cards ordenados
+    questions.forEach(question => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.dataset.docId = question.id;
+
+        card.innerHTML = `
+            <p><strong>Índice:</strong> ${question.index}</p>
+            <p><strong>Pergunta:</strong> ${question.text}</p>
+        `;
+
+        // Botão de excluir somente quando showDeleteButton = true
+        if (showDeleteButton) {
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Excluir';
+            deleteButton.addEventListener('click', () => deleteQuestion(categoryId, subcategoryId, question.id));
+            card.appendChild(deleteButton);
         }
-    } catch (error) {
-        console.error("Erro ao carregar questões: ", error);
-        questionsContainer.innerHTML = "<p>Erro ao carregar questões.</p>";
-    }
+
+        container.appendChild(card);
+    });
 }
 
 // Função para confirmar a exclusão de um documento
