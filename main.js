@@ -139,11 +139,26 @@ export async function fetchSubcategories(categoryId) {
 }
 
 // Fetch questions and display them in the questions container
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+
 export async function fetchQuestions(categoryId, subcategoryId, showDeleteButton = true) {
     const questionsContainer = document.getElementById('questionsContainer');
-    questionsContainer.innerHTML = ""; // Clear the container before adding questions
+    questionsContainer.innerHTML = ""; // Limpa o container antes de adicionar as questões
+
     try {
-        const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories", subcategoryId, "questions"));
+        // Cria uma query com ordenação crescente pelo campo "index"
+        const q = query(
+            collection(db, "categories", categoryId, "subcategories", subcategoryId, "questions"),
+            orderBy("index", "asc")
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            questionsContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
+            return;
+        }
+
         querySnapshot.forEach((doc) => {
             const question = doc.data();
             questionsContainer.innerHTML += `
@@ -154,15 +169,13 @@ export async function fetchQuestions(categoryId, subcategoryId, showDeleteButton
                 </div>
             `;
         });
-  questions.sort((a, b) => a.index - b.index);
-        if (querySnapshot.empty) {
-            questionsContainer.innerHTML = "<p>Nenhuma questão encontrada.</p>";
-        }
+
     } catch (error) {
         console.error("Erro ao carregar questões: ", error);
         questionsContainer.innerHTML = "<p>Erro ao carregar questões.</p>";
     }
 }
+
 
 // Função para confirmar a exclusão de um documento
 function confirmDelete(type, docId, categoryId = null, subcategoryId = null) {
