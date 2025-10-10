@@ -104,7 +104,9 @@ export async function fetchSubcategories(categoryId) {
     subcategoriesContainer.innerHTML = ""; // Limpa o container antes de adicionar as subcategorias
 
     try {
-        const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
+        const q = query(collection(db, "categories", categoryId, "subcategories"), orderBy("order", "asc"));
+const querySnapshot = await getDocs(q);
+
 
         querySnapshot.forEach((doc) => {
             const subcategory = doc.data();
