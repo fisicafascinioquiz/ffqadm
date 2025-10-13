@@ -9,17 +9,34 @@
 <body>
     <div class="container">
         <h2>Editar Subcategoria</h2>
-        <input type="text" id="editTextSubcategoryName" placeholder="Nome da Subcategoria">
-        <input type="text" id="editTextSubcategoryImage" placeholder="URL da Imagem">
-        <input type="number" id="editTextMaxIndex" placeholder="Índice Máximo">
-        <input type="number" id="editTextQuestionsCount" placeholder="Quantidade de Questões">
-        <input type="number" id="editTextpointsPerQuestion" placeholder="Pontos por Questão">
-        <input type="number" id="editTextTime" placeholder="Tempo em Minutos">
-         <input type="number" id="editTextOrder" placeholder="Ordem de Exibição (order)">
-        <input type="text" id="editTextEbookPdfUrl" placeholder="URL do PDF do Ebook (ebookPdfUrl)">
+        <label for="editTextSubcategoryName">Nome da Subcategoria</label>
+<input type="text" id="editTextSubcategoryName" placeholder="Nome da Subcategoria">
+
+<label for="editTextSubcategoryImage">URL da Imagem</label>
+<input type="text" id="editTextSubcategoryImage" placeholder="URL da Imagem">
+
+<label for="editTextMaxIndex">Índice Máximo</label>
+<input type="number" id="editTextMaxIndex" placeholder="Índice Máximo">
+
+<label for="editTextQuestionsCount">Quantidade de Questões</label>
+<input type="number" id="editTextQuestionsCount" placeholder="Quantidade de Questões">
+
+<label for="editTextpointsPerQuestion">Pontos por Questão</label>
+<input type="number" id="editTextpointsPerQuestion" placeholder="Pontos por Questão">
+
+<label for="editTextTime">Tempo em Segundos</label>
+<input type="number" id="editTextTime" placeholder="Tempo em segundos">
+
+<label for="editTextOrder">Ordem de Exibição (order)</label>
+<input type="number" id="editTextOrder" placeholder="Ordem de Exibição (order)">
+
+<label for="editTextEbookPdfUrl">URL do PDF do Ebook (ebookPdfUrl)</label>
+<input type="text" id="editTextEbookPdfUrl" placeholder="URL do PDF do Ebook (ebookPdfUrl)">
+
         <select id="spinnerIsAdapted">
-            <option value="true">Adaptada</option>
             <option value="false">Não adaptada</option>
+            <option value="true">Adaptada</option>
+            
         </select>
         <button id="buttonUpdateSubcategory">Salvar</button>
     </div>

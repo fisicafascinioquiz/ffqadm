@@ -141,3 +141,11 @@ input:focus, select:focus {
   color: #888;
   font-style: italic;
 }
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  color: #333;
+}
