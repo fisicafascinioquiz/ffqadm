@@ -352,7 +352,7 @@ export async function addSubcategory(categoryId) {
 subcategoryImage = formatDriveImageLink(subcategoryImage);
     const maxIndex = document.getElementById('editTextMaxIndex').value;
     const questionsCount = document.getElementById('editTextQuestionsCount').value;
-    const pointsPerQuestion = document.getElementById('editTextpointsPerQuestion').value;
+    const pointsPerQuestion = document.getElementById('editTextpointsPerQuestion').value    ;
     const time = document.getElementById('editTextTime').value;
     const order = document.getElementById('editTextOrder').value; // 🆕
     let ebookPdfUrl = document.getElementById('editTextEbookPdfUrl').value; // 🆕

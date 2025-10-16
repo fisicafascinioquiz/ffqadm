@@ -145,7 +145,7 @@
                         subcategoryName: document.getElementById('editTextSubcategoryName').value,
                         subcategoryImage: subcategoryImage,
                         maxIndex: parseInt(document.getElementById('editTextMaxIndex').value),
-                        questionsCount: parseInt(document.getElementById('editTextQuestionsCount').value),
+                        questionsCount: parseInt(document.getElementById('editTextQuestionsCount').value) || 0,
                         pointsPerQuestion: parseInt(document.getElementById('editTextpointsPerQuestion').value),
                         time: parseInt(document.getElementById('editTextTime').value),
                         order: parseInt(document.getElementById('editTextOrder').value) || 0,
