@@ -55,7 +55,7 @@
     <script type="module" src="main.js"></script>
 
     <script type="module">
-        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
         import { db } from './firebase-config.js';
         import { fetchSubcategories, formatDriveLink, formatDriveImageLink } from './main.js';
 
@@ -78,7 +78,11 @@
             subcategoriesContainer.innerHTML = "";
 
             try {
-                const querySnapshot = await getDocs(collection(db, "categories", categoryId, "subcategories"));
+                const q = query(
+    collection(db, "categories", categoryId, "subcategories"),
+    orderBy("order", "asc")
+);
+const querySnapshot = await getDocs(q);
                 querySnapshot.forEach((docItem) => {
                     const subcategory = docItem.data();
                     subcategoriesContainer.innerHTML += `
